@@ -1,5 +1,5 @@
 <template>
-  <div dir="rtl">
+  <div dir="rtl" class="app-shell">
     <Header />
     <main><router-view /></main>
     <Footer />

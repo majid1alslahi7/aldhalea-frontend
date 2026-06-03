@@ -40,12 +40,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { Loader2, User, Calendar, Clock, Eye, Share2, Send } from '@lucide/vue';
 import { useNewsStore } from '@/stores/news';
 import type { NewsItem } from '@/types/api';
-import { apiData, localizedText, sanitizeHtml } from '@/utils/content';
+import { apiData, localizedText, sanitizeHtml, slugValue } from '@/utils/content';
+import { applySeo } from '@/utils/seo';
+import { assetUrl, routeUrl, site } from '@/utils/site';
+import { newsBySlug } from '@/data/curatedContent';
 
 const route = useRoute();
 const newsStore = useNewsStore();
@@ -54,10 +57,59 @@ const loading = ref(true);
 
 const safeContent = computed(() => sanitizeHtml(news.value?.content));
 
-onMounted(async () => {
-  const slug = route.params.slug as string;
+function updateSeo(slug: string) {
+  if (!news.value) {
+    applySeo({ title: 'الخبر غير متاح', description: site.description, path: `/news/${slug}`, noindex: true });
+    return;
+  }
+
+  const title = localizedText(news.value.title);
+  const description = localizedText(news.value.excerpt || news.value.subtitle) || site.description;
+  const path = `/news/${slugValue(news.value.slug) || slug}`;
+  const image = news.value.main_image || news.value.thumbnail || site.defaultImage;
+
+  applySeo({
+    title,
+    description,
+    path,
+    image,
+    type: 'article',
+    publishedTime: news.value.published_date,
+    author: news.value.writer?.name || site.name,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'NewsArticle',
+      headline: title,
+      description,
+      image: assetUrl(image),
+      datePublished: news.value.published_date,
+      author: { '@type': 'Person', name: news.value.writer?.name || site.name },
+      publisher: { '@type': 'NewsMediaOrganization', name: site.name, logo: { '@type': 'ImageObject', url: assetUrl('/icons/pwa-512.png') } },
+      mainEntityOfPage: routeUrl(path),
+      articleSection: localizedText(news.value.category?.name),
+      inLanguage: site.language,
+    },
+  });
+}
+
+async function loadNews(slug: string) {
+  const activeSlug = slug;
+  loading.value = true;
+  news.value = null;
+  const fallbackNews = newsBySlug(slug);
+
+  if (fallbackNews) {
+    news.value = fallbackNews;
+    loading.value = false;
+    updateSeo(slug);
+  }
+
   const result = await newsStore.fetchNewsBySlug(slug);
+  if (route.params.slug !== activeSlug) return;
   if (result) news.value = apiData<NewsItem | null>(result, null);
   loading.value = false;
-});
+  updateSeo(slug);
+}
+
+watch(() => route.params.slug, (slug) => loadNews(slug as string), { immediate: true });
 </script>

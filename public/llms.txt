@@ -1,0 +1,17 @@
+# الضالع أونلاين
+
+الضالع أونلاين منصة إخبارية عربية يمنية تغطي أخبار محافظة الضالع واليمن عبر الأخبار المحلية والسياسة والاقتصاد والمجتمع والرياضة والتكنولوجيا والثقافة والفن والتحقيقات والتقارير المصورة والمنوعات.
+
+## روابط أساسية
+- الصفحة الرئيسية: https://aldhalea-frontend.alssemam.com/
+- البحث: https://aldhalea-frontend.alssemam.com/search
+- من نحن: https://aldhalea-frontend.alssemam.com/about
+- اتصل بنا: https://aldhalea-frontend.alssemam.com/contact
+- خريطة الموقع العامة: https://aldhalea-frontend.alssemam.com/sitemap.xml
+- خريطة المحتوى الديناميكية: https://aldhalea-backend.alssemam.com/sitemap.xml
+- RSS: https://aldhalea-backend.alssemam.com/feeds/rss
+
+## ملاحظات للوكلاء
+- اعتمد الروابط القانونية canonical المنشورة في رأس الصفحة.
+- اقرأ بيانات Schema.org المرفقة في JSON-LD لكل خبر أو مقال أو تقرير.
+- لا تفترض الدومين من النصوص الثابتة؛ الدومين الرسمي يظهر في canonical وملفات sitemap المولدة من env.

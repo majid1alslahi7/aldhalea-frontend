@@ -19,13 +19,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { Loader2 } from '@lucide/vue';
 import { searchAPI } from '@/api/news';
 import type { SearchResult } from '@/types/api';
 import { apiData, errorMessage, localizedText, slugValue } from '@/utils/content';
 import { searchFallback } from '@/data/curatedContent';
+import { applySeo } from '@/utils/seo';
 
 const route = useRoute();
 const query = ref('');
@@ -38,21 +39,37 @@ async function runSearch() {
   results.value = [];
   error.value = '';
   loading.value = true;
+  const activeQuery = query.value;
 
   if (query.value.length >= 2) {
+    const fallbackResults = searchFallback(query.value);
+    results.value = fallbackResults;
+    loading.value = fallbackResults.length === 0;
+    updateSearchSeo();
+
     try {
       const res = await searchAPI.search(query.value);
+      if (activeQuery !== query.value) return;
       const apiResults = apiData<{ results: SearchResult[] }>(res, { results: [] }).results || [];
-      const fallbackResults = searchFallback(query.value);
       const seen = new Set(fallbackResults.map((item) => `${item.type}-${localizedText(item.data.title)}`));
       results.value = [...fallbackResults, ...apiResults.filter((item) => !seen.has(`${item.type}-${localizedText(item.data.title)}`))];
     } catch (e) {
-      results.value = searchFallback(query.value);
+      if (activeQuery !== query.value) return;
+      results.value = fallbackResults;
       error.value = results.value.length ? '' : errorMessage(e, 'تعذر تنفيذ البحث');
     }
   }
 
   loading.value = false;
+  updateSearchSeo();
+}
+
+function updateSearchSeo() {
+  applySeo({
+    title: query.value ? `بحث: ${query.value}` : 'البحث',
+    description: query.value ? `نتائج البحث عن ${query.value} في أخبار ومقالات الضالع أونلاين.` : 'ابحث في أرشيف أخبار ومقالات وتقارير الضالع أونلاين.',
+    path: query.value ? `/search?q=${encodeURIComponent(query.value)}` : '/search',
+  });
 }
 
 function resultPath(item: SearchResult) {
@@ -61,6 +78,5 @@ function resultPath(item: SearchResult) {
     : `/news/${slugValue(item.data.slug)}`;
 }
 
-watch(() => route.query.q, runSearch);
-onMounted(runSearch);
+watch(() => route.query.q, runSearch, { immediate: true });
 </script>

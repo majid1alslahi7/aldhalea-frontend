@@ -73,6 +73,34 @@ export interface ArticleItem {
   published_diff?: string | null;
 }
 
+export interface EditorialContentItem {
+  id: number;
+  title: LocalizedText;
+  slug: LocalizedText;
+  subtitle?: LocalizedText;
+  content?: LocalizedText;
+  excerpt?: LocalizedText;
+  main_image?: string | null;
+  thumbnail?: string | null;
+  featured_image?: string | null;
+  featured_video?: string | null;
+  category?: Category | null;
+  user?: Writer | null;
+  writer?: Writer | null;
+  interviewer?: Writer | null;
+  interviewee_name?: string | null;
+  interviewee_title?: string | null;
+  source_name?: string | null;
+  source_url?: string | null;
+  location?: string | null;
+  views_count?: number;
+  shares_count?: number;
+  comments_count?: number;
+  reading_time?: number | string | null;
+  published_at?: string | null;
+  updated_at?: string | null;
+}
+
 export interface PollOption {
   id: number;
   text: LocalizedText;

@@ -27,13 +27,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { Clock, Eye, Loader2, User } from '@lucide/vue';
 import { articleAPI } from '@/api/news';
 import type { ArticleItem } from '@/types/api';
-import { apiData, localizedText, sanitizeHtml } from '@/utils/content';
+import { apiData, localizedText, sanitizeHtml, slugValue } from '@/utils/content';
 import { articleBySlug } from '@/data/curatedContent';
+import { applySeo } from '@/utils/seo';
+import { assetUrl, routeUrl, site } from '@/utils/site';
 
 const route = useRoute();
 const article = ref<ArticleItem | null>(null);
@@ -41,15 +43,64 @@ const loading = ref(true);
 
 const safeContent = computed(() => sanitizeHtml(article.value?.content));
 
-onMounted(async () => {
-  const slug = route.params.slug as string;
+function updateSeo(slug: string) {
+  if (!article.value) {
+    applySeo({ title: 'المقال غير متاح', description: site.description, path: `/articles/${slug}`, noindex: true });
+    return;
+  }
+
+  const title = localizedText(article.value.title);
+  const description = localizedText(article.value.excerpt) || site.description;
+  const path = `/articles/${slugValue(article.value.slug) || slug}`;
+  const image = article.value.featured_image || site.defaultImage;
+
+  applySeo({
+    title,
+    description,
+    path,
+    image,
+    type: 'article',
+    author: article.value.writer?.name || site.name,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title,
+      description,
+      image: assetUrl(image),
+      author: { '@type': 'Person', name: article.value.writer?.name || site.name },
+      publisher: { '@type': 'NewsMediaOrganization', name: site.name, logo: { '@type': 'ImageObject', url: assetUrl('/icons/pwa-512.png') } },
+      mainEntityOfPage: routeUrl(path),
+      articleSection: localizedText(article.value.category?.name),
+      inLanguage: site.language,
+    },
+  });
+}
+
+async function loadArticle(slug: string) {
+  const activeSlug = slug;
+  loading.value = true;
+  article.value = null;
+  const fallbackArticle = articleBySlug(slug);
+
+  if (fallbackArticle) {
+    article.value = fallbackArticle;
+    loading.value = false;
+    updateSeo(slug);
+  }
+
   try {
     const res = await articleAPI.getBySlug(slug);
-    article.value = articleBySlug(slug) || apiData<ArticleItem | null>(res, null);
+    if (route.params.slug !== activeSlug) return;
+    article.value = fallbackArticle || apiData<ArticleItem | null>(res, null);
   } catch {
-    article.value = articleBySlug(slug);
+    if (route.params.slug !== activeSlug) return;
+    article.value = fallbackArticle;
   } finally {
+    if (route.params.slug !== activeSlug) return;
     loading.value = false;
+    updateSeo(slug);
   }
-});
+}
+
+watch(() => route.params.slug, (slug) => loadArticle(slug as string), { immediate: true });
 </script>

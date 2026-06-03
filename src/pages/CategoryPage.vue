@@ -19,13 +19,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { Loader2 } from '@lucide/vue';
 import { categoryAPI } from '@/api/news';
 import type { Category, NewsItem } from '@/types/api';
 import { apiArray, apiData, errorMessage, localizedText, slugValue } from '@/utils/content';
 import { categoryByRouteSlug, mergeNewsWithFallback, newsByCategory } from '@/data/curatedContent';
+import { applySeo } from '@/utils/seo';
+import { routeUrl, site } from '@/utils/site';
 
 const route = useRoute();
 const category = ref<Category | null>(null);
@@ -35,21 +37,65 @@ const error = ref('');
 
 const categoryName = computed(() => localizedText(category.value?.name));
 
-onMounted(async () => {
-  const slug = route.params.slug as string;
+function updateSeo(slug: string) {
+  const title = categoryName.value || 'أخبار التصنيف';
+  const description = `تابع ${title} من الضالع أونلاين: أخبار وتقارير ومقالات محدثة من الواقع اليمني والمحلي.`;
+
+  applySeo({
+    title,
+    description,
+    path: `/category/${slug}`,
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: title,
+      description,
+      url: routeUrl(`/category/${slug}`),
+      isPartOf: { '@type': 'WebSite', name: site.name, url: site.url },
+      mainEntity: newsList.value.slice(0, 12).map((item) => ({
+        '@type': 'NewsArticle',
+        headline: localizedText(item.title),
+        url: routeUrl(`/news/${slugValue(item.slug)}`),
+      })),
+    },
+  });
+}
+
+async function loadCategory(slug: string) {
+  const activeSlug = slug;
+  loading.value = true;
+  error.value = '';
+  category.value = null;
+  newsList.value = [];
+  const fallbackCategory = categoryByRouteSlug(slug);
+  const fallbackNews = newsByCategory(slug);
+
+  if (fallbackCategory || fallbackNews.length) {
+    category.value = fallbackCategory;
+    newsList.value = fallbackNews;
+    loading.value = false;
+    updateSeo(slug);
+  }
+
   try {
     const [categoryRes, newsRes] = await Promise.all([
       categoryAPI.getBySlug(slug),
       categoryAPI.getNews(slug),
     ]);
-    category.value = categoryByRouteSlug(slug) || apiData<Category | null>(categoryRes, null);
-    newsList.value = mergeNewsWithFallback(apiArray<NewsItem>(newsRes), newsByCategory(slug));
+    if (route.params.slug !== activeSlug) return;
+    category.value = fallbackCategory || apiData<Category | null>(categoryRes, null);
+    newsList.value = mergeNewsWithFallback(apiArray<NewsItem>(newsRes), fallbackNews);
   } catch (e) {
-    category.value = categoryByRouteSlug(slug);
-    newsList.value = newsByCategory(slug);
+    if (route.params.slug !== activeSlug) return;
+    category.value = fallbackCategory;
+    newsList.value = fallbackNews;
     error.value = newsList.value.length ? '' : errorMessage(e, 'تعذر تحميل أخبار التصنيف');
   } finally {
+    if (route.params.slug !== activeSlug) return;
     loading.value = false;
+    updateSeo(slug);
   }
-});
+}
+
+watch(() => route.params.slug, (slug) => loadCategory(slug as string), { immediate: true });
 </script>

@@ -28,6 +28,24 @@ export const articleAPI = {
   getBySlug(slug: string) { return apiClient.get(`/articles/${slug}`); },
 };
 
+export const reportAPI = {
+  getAll(filters?: Record<string, unknown>) { return apiClient.get('/reports', { params: filters }); },
+  getLatest() { return apiClient.get('/reports/latest'); },
+  getBySlug(slug: string) { return apiClient.get(`/reports/${slug}`); },
+};
+
+export const investigationAPI = {
+  getAll(filters?: Record<string, unknown>) { return apiClient.get('/investigations', { params: filters }); },
+  getLatest() { return apiClient.get('/investigations/latest'); },
+  getBySlug(slug: string) { return apiClient.get(`/investigations/${slug}`); },
+};
+
+export const interviewAPI = {
+  getAll(filters?: Record<string, unknown>) { return apiClient.get('/interviews', { params: filters }); },
+  getLatest() { return apiClient.get('/interviews/latest'); },
+  getBySlug(slug: string) { return apiClient.get(`/interviews/${slug}`); },
+};
+
 export const pollAPI = {
   getActive() { return apiClient.get('/polls/active'); },
   getFeatured() { return apiClient.get('/polls/featured'); },

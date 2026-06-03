@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aldhalea-frontend.alssemam.com/sitemap.xml
+Sitemap: https://aldhalea-backend.alssemam.com/sitemap.xml

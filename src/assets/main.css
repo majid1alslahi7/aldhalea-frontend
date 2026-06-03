@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply bg-gray-50 text-gray-900; font-family: 'Cairo', 'Tajawal', sans-serif; }
+  [dir="rtl"] { direction: rtl; text-align: right; }
+}
+
+@layer components {
+  .container-custom { @apply max-w-7xl mx-auto px-4; }
+  .btn-primary { @apply inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-xl hover:bg-primary-700 transition-all; }
+  .card { @apply bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all; }
+  .section-title { @apply text-2xl font-bold relative pb-4 mb-8 after:absolute after:bottom-0 after:right-0 after:w-20 after:h-1 after:bg-primary-600 after:rounded-full; }
+  .breaking-badge { @apply inline-flex items-center gap-1 px-2 py-1 bg-breaking text-white text-xs font-bold rounded-md; }
+}
+
+.breaking-ticker { @apply bg-breaking text-white py-2 overflow-hidden; }

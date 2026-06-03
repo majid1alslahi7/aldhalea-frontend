@@ -53,6 +53,7 @@ export interface NewsItem {
   thumbnail?: string | null;
   category?: Category | null;
   writer?: Writer | null;
+  source?: { name?: string | null; url?: string | null } | null;
   stats?: ContentStats;
   reading_time?: { formatted?: string | null } | null;
   published_date?: string | null;

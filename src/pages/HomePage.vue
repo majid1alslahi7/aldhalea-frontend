@@ -60,6 +60,22 @@
           <div v-if="newsStore.latestNews.length" class="text-center mt-8">
             <button class="btn-primary" @click="loadMore" :disabled="newsStore.loading">{{ newsStore.loading ? 'جار التحميل...' : 'تحميل المزيد' }}</button>
           </div>
+
+          <section v-if="latestArticles.length" class="mt-10">
+            <h2 class="section-title">✍️ مقالات وتحليلات</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div v-for="article in latestArticles" :key="article.id" class="card p-4 cursor-pointer" @click="goToArticle(article)">
+                <img v-if="article.featured_image" :src="article.featured_image" class="w-full h-40 object-cover rounded-xl mb-3" />
+                <span class="text-xs text-primary-600 font-medium">{{ localizedText(article.category?.name) }}</span>
+                <h3 class="font-bold text-lg mt-1 line-clamp-2 hover:text-primary-600 transition">{{ localizedText(article.title) }}</h3>
+                <p class="text-gray-500 text-sm line-clamp-2 mt-2">{{ localizedText(article.excerpt) }}</p>
+                <div class="flex items-center justify-between text-xs text-gray-400 mt-4">
+                  <span>{{ article.writer?.name || 'الضالع أونلاين' }}</span>
+                  <span>{{ article.published_diff }}</span>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
 
         <aside class="space-y-8">
@@ -103,24 +119,36 @@ import { Eye, MessageCircle } from '@lucide/vue';
 import { useNewsStore } from '@/stores/news';
 import BreakingTicker from '@/components/layout/BreakingTicker.vue';
 import PollWidget from '@/components/interactive/PollWidget.vue';
-import type { NewsItem } from '@/types/api';
-import { localizedText, slugValue } from '@/utils/content';
+import { articleAPI } from '@/api/news';
+import type { ArticleItem, NewsItem } from '@/types/api';
+import { apiArray, localizedText, slugValue } from '@/utils/content';
 
 const router = useRouter();
 const newsStore = useNewsStore();
 const page = ref(1);
+const latestArticles = ref<ArticleItem[]>([]);
 
 function goToNews(news: NewsItem) {
   router.push(`/news/${slugValue(news.slug)}`);
 }
 
+function goToArticle(article: ArticleItem) {
+  router.push(`/articles/${slugValue(article.slug)}`);
+}
+
 async function loadMore() { page.value++; await newsStore.fetchLatestNews(page.value); }
 
 onMounted(async () => {
-  await Promise.allSettled([
+  const results = await Promise.allSettled([
     newsStore.fetchBreakingNews(), newsStore.fetchFeaturedNews(),
     newsStore.fetchLatestNews(), newsStore.fetchTrendingNews(),
     newsStore.fetchEditorsPicks(),
+    articleAPI.getLatest(),
   ]);
+
+  const articlesResult = results[5];
+  if (articlesResult.status === 'fulfilled') {
+    latestArticles.value = apiArray<ArticleItem>(articlesResult.value).slice(0, 6);
+  }
 });
 </script>

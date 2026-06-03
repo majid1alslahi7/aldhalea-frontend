@@ -14,6 +14,13 @@
           </div>
           <img v-if="news.main_image" :src="news.main_image" class="w-full rounded-2xl mb-8 shadow-lg" />
           <div class="prose prose-lg max-w-none article-content" v-html="safeContent"></div>
+          <div v-if="news.source?.name" class="mt-8 rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
+            <span class="font-bold text-gray-800">مصدر المعلومات: </span>
+            <a v-if="news.source.url" :href="news.source.url" target="_blank" rel="noopener noreferrer" class="text-primary-700 hover:underline">
+              {{ news.source.name }}
+            </a>
+            <span v-else>{{ news.source.name }}</span>
+          </div>
           <div class="flex items-center gap-3 mt-8 pt-6 border-t">
             <span class="text-sm text-gray-500">شارك:</span>
             <button class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center"><Share2 :size="18" /></button>

@@ -1,3 +1,12 @@
+<IfModule mod_headers.c>
+  <FilesMatch "^(favicon\.ico|apple-touch-icon\.png|manifest\.webmanifest)$">
+    Header set Cache-Control "public, max-age=300, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "^(favicon-[0-9]+|pwa-[0-9]+|maskable-[0-9]+)\.png$">
+    Header set Cache-Control "public, max-age=300, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /

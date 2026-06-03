@@ -5,11 +5,10 @@ const apiBaseURL = (import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v
 const apiClient = axios.create({
   baseURL: apiBaseURL,
   headers: {
-    'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'X-Localization': 'ar',
   },
   timeout: 8000,
+  withCredentials: true,
 });
 
 apiClient.interceptors.request.use((config) => {

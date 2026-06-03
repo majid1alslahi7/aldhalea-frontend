@@ -9,22 +9,23 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "latest",
-    "vue-router": "latest",
-    "pinia": "latest",
-    "axios": "latest",
+    "@lucide/vue": "latest",
     "@vueuse/core": "latest",
-    "@lucide/vue": "latest"
+    "axios": "latest",
+    "pinia": "latest",
+    "vue": "latest",
+    "vue-router": "latest"
   },
   "devDependencies": {
-    "vite": "latest",
-    "@vitejs/plugin-vue": "latest",
-    "tailwindcss": "latest",
-    "@tailwindcss/typography": "latest",
-    "@tailwindcss/forms": "latest",
     "@tailwindcss/aspect-ratio": "latest",
-    "postcss": "latest",
+    "@tailwindcss/forms": "latest",
+    "@tailwindcss/typography": "latest",
+    "@tsconfig/node24": "^24.0.4",
+    "@vitejs/plugin-vue": "latest",
     "autoprefixer": "latest",
-    "typescript": "latest"
+    "postcss": "latest",
+    "tailwindcss": "latest",
+    "typescript": "latest",
+    "vite": "latest"
   }
 }

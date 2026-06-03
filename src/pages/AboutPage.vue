@@ -89,5 +89,5 @@
 </template>
 
 <script setup lang="ts">
-import { Eye, Target, Shield, Zap, Lock, Heart } from 'lucide-vue-next';
+import { Eye, Target, Shield, Zap, Lock, Heart } from '@lucide/vue';
 </script>

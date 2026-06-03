@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { Loader2, User, Calendar, Clock, Eye, Facebook, Twitter, Send } from 'lucide-vue-next';
+import { Loader2, User, Calendar, Clock, Eye, Facebook, Twitter, Send } from '@lucide/vue';
 import { useNewsStore } from '@/stores/news';
 
 const route = useRoute();

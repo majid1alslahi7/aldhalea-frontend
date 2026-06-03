@@ -81,7 +81,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Search, Menu, X, Facebook, Twitter, Youtube } from 'lucide-vue-next';
+import { Search, Menu, X, Facebook, Twitter, Youtube } from '@lucide/vue';
 import { useCategoryStore } from '@/stores/categories';
 
 const router = useRouter();

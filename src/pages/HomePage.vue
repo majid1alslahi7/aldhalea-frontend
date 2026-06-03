@@ -93,7 +93,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Eye, MessageCircle } from 'lucide-vue-next';
+import { Eye, MessageCircle } from '@lucide/vue';
 import { useNewsStore } from '@/stores/news';
 import BreakingTicker from '@/components/layout/BreakingTicker.vue';
 import PollWidget from '@/components/interactive/PollWidget.vue';

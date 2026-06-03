@@ -88,7 +88,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
-import { Phone, Mail, MapPin, Clock } from 'lucide-vue-next';
+import { Phone, Mail, MapPin, Clock } from '@lucide/vue';
 
 const form = reactive({ name: '', email: '', subject: '', message: '' });
 const submitted = ref(false);

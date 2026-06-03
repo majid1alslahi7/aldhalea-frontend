@@ -35,5 +35,5 @@
 </template>
 
 <script setup lang="ts">
-import { Phone, Mail, MapPin } from 'lucide-vue-next';
+import { Phone, Mail, MapPin } from '@lucide/vue';
 </script>

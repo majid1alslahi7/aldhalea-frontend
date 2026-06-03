@@ -1,9 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50">
-    <div class="container-custom py-8">
-      <div v-if="loading" class="flex justify-center py-20">
-        <Loader2 :size="40" class="animate-spin text-primary-600" />
-      </div>
+    <div class="max-w-7xl mx-auto px-4 py-8">
+      <div v-if="loading" class="flex justify-center py-20"><Loader2 :size="40" class="animate-spin text-primary-600" /></div>
       <div v-else-if="news" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <article class="lg:col-span-2">
           <span class="inline-block px-3 py-1 bg-primary-50 text-primary-700 text-sm rounded-full mb-4">{{ news.category?.name }}</span>
@@ -16,15 +14,12 @@
           </div>
           <img v-if="news.main_image" :src="news.main_image" class="w-full rounded-2xl mb-8 shadow-lg" />
           <div class="prose prose-lg max-w-none" v-html="typeof news.content === 'object' ? news.content.ar : news.content"></div>
-
           <div class="flex items-center gap-3 mt-8 pt-6 border-t">
             <span class="text-sm text-gray-500">شارك:</span>
-            <button class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center"><Facebook :size="18" /></button>
-            <button class="w-10 h-10 bg-sky-500 text-white rounded-lg flex items-center justify-center"><Twitter :size="18" /></button>
+            <button class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center"><Share2 :size="18" /></button>
             <button class="w-10 h-10 bg-green-500 text-white rounded-lg flex items-center justify-center"><Send :size="18" /></button>
           </div>
         </article>
-
         <aside class="space-y-8">
           <div v-if="news.writer" class="card p-5 text-center">
             <img :src="news.writer.avatar || 'https://ui-avatars.com/api/?name=' + news.writer.name" class="w-20 h-20 rounded-full mx-auto mb-3" />
@@ -40,7 +35,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { Loader2, User, Calendar, Clock, Eye, Facebook, Twitter, Send } from '@lucide/vue';
+import { Loader2, User, Calendar, Clock, Eye, Share2, Send } from '@lucide/vue';
 import { useNewsStore } from '@/stores/news';
 
 const route = useRoute();

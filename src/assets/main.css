@@ -38,3 +38,8 @@
 }
 
 .breaking-ticker { @apply bg-breaking text-white py-2 overflow-hidden; }
+
+.article-content :where(p, ul, ol, blockquote) { @apply mb-5 leading-8 text-gray-700; }
+.article-content :where(h2, h3, h4) { @apply mt-8 mb-4 font-bold text-gray-900; }
+.article-content :where(a) { @apply text-primary-700 underline underline-offset-4; }
+.article-content :where(img) { @apply rounded-xl my-6 max-w-full; }

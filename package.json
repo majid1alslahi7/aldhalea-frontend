@@ -12,6 +12,7 @@
     "@lucide/vue": "latest",
     "@vueuse/core": "latest",
     "axios": "latest",
+    "dompurify": "^3.4.8",
     "pinia": "latest",
     "vue": "latest",
     "vue-router": "latest"

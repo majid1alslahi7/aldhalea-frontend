@@ -4,7 +4,9 @@
       <div class="max-w-7xl mx-auto px-4 flex items-center justify-between py-1.5 text-xs">
         <span class="hidden sm:block">{{ currentDate }}</span>
         <div class="flex items-center gap-2 ml-auto sm:ml-0">
-          <a v-for="s in socials" :key="s.name" :href="s.url" class="hover:text-primary-300 transition p-1" v-html="s.svg"></a>
+          <a v-for="s in socials" :key="s.name" :href="s.url" :aria-label="s.name" class="hover:text-primary-300 transition p-1">
+            <component :is="s.icon" :size="14" aria-hidden="true" />
+          </a>
         </div>
       </div>
     </div>
@@ -61,8 +63,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Search, Menu, X } from '@lucide/vue';
+import { CirclePlay, Globe, Menu, Search, Send, X } from '@lucide/vue';
 import { useCategoryStore } from '@/stores/categories';
+import { localizedText, slugValue } from '@/utils/content';
 
 const router = useRouter();
 const categoryStore = useCategoryStore();
@@ -73,13 +76,17 @@ const searchQuery = ref('');
 const currentDate = computed(() => new Date().toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
 
 const socials = [
-  { name: 'Facebook', url: '#', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' },
-  { name: 'Twitter', url: '#', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' },
-  { name: 'Youtube', url: '#', svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>' },
+  { name: 'Facebook', url: '#', icon: Globe },
+  { name: 'Twitter', url: '#', icon: Send },
+  { name: 'Youtube', url: '#', icon: CirclePlay },
 ];
 
 const menuItems = computed(() => {
-  const cats = categoryStore.menuCategories.map((c: any) => ({ name: c.name, slug: c.slug, path: `/category/${c.slug}` }));
+  const cats = categoryStore.menuCategories.map((c) => ({
+    name: localizedText(c.name),
+    slug: slugValue(c.slug),
+    path: `/category/${slugValue(c.slug)}`,
+  }));
   return [{ name: 'الرئيسية', slug: 'home', path: '/' }, ...cats, { name: 'من نحن', slug: 'about', path: '/about' }, { name: 'اتصل بنا', slug: 'contact', path: '/contact' }];
 });
 

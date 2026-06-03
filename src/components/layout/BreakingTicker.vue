@@ -11,7 +11,7 @@
       <div class="overflow-hidden flex-1">
         <div class="animate-ticker whitespace-nowrap inline-block">
           <span v-for="item in items" :key="item.id" class="mx-8 text-sm font-medium">
-            {{ typeof item.title === 'object' ? item.title.ar : item.title }}
+            {{ localizedText(item.title) }}
             <span class="mx-2 text-white/50">|</span>
           </span>
         </div>
@@ -21,7 +21,10 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ items: any[] }>();
+import type { NewsItem } from '@/types/api';
+import { localizedText } from '@/utils/content';
+
+defineProps<{ items: NewsItem[] }>();
 </script>
 
 <style scoped>

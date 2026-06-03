@@ -64,12 +64,14 @@
               <label class="block text-sm font-medium mb-2">الموضوع *</label>
               <input v-model="form.subject" type="text" required class="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition" placeholder="موضوع الرسالة" />
             </div>
+            <input v-model="form.website" type="text" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
             <div>
               <label class="block text-sm font-medium mb-2">الرسالة *</label>
               <textarea v-model="form.message" rows="5" required class="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 transition resize-none" placeholder="اكتب رسالتك هنا..."></textarea>
             </div>
-            <button type="submit" class="btn-primary w-full md:w-auto" :disabled="submitted">
-              {{ submitted ? 'تم الإرسال ✓' : 'إرسال الرسالة' }}
+            <p v-if="feedback" class="text-sm" :class="feedbackType === 'error' ? 'text-red-600' : 'text-green-600'">{{ feedback }}</p>
+            <button type="submit" class="btn-primary w-full md:w-auto" :disabled="submitting || submitted">
+              {{ submitting ? 'جار الإرسال...' : submitted ? 'تم الإرسال ✓' : 'إرسال الرسالة' }}
             </button>
           </form>
         </div>
@@ -89,16 +91,35 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import { Phone, Mail, MapPin, Clock } from '@lucide/vue';
+import { contactAPI } from '@/api/news';
+import { errorMessage } from '@/utils/content';
 
-const form = reactive({ name: '', email: '', subject: '', message: '' });
+const form = reactive({ name: '', email: '', subject: '', message: '', website: '' });
 const submitted = ref(false);
+const submitting = ref(false);
+const feedback = ref('');
+const feedbackType = ref<'success' | 'error'>('success');
 
-function submitForm() {
-  console.log('Form submitted:', form);
-  submitted.value = true;
-  setTimeout(() => {
-    submitted.value = false;
-    form.name = ''; form.email = ''; form.subject = ''; form.message = '';
-  }, 3000);
+async function submitForm() {
+  submitting.value = true;
+  feedback.value = '';
+
+  try {
+    const res = await contactAPI.send(form);
+    feedbackType.value = 'success';
+    feedback.value = (res as { message?: string }).message || 'تم استلام رسالتك بنجاح';
+    submitted.value = true;
+    form.name = '';
+    form.email = '';
+    form.subject = '';
+    form.message = '';
+    form.website = '';
+    setTimeout(() => { submitted.value = false; }, 3000);
+  } catch (e) {
+    feedbackType.value = 'error';
+    feedback.value = errorMessage(e, 'تعذر إرسال الرسالة حالياً');
+  } finally {
+    submitting.value = false;
+  }
 }
 </script>

@@ -23,6 +23,7 @@ import { ref, computed, onMounted } from 'vue';
 import { pollAPI } from '@/api/news';
 import type { Poll } from '@/types/api';
 import { apiArray, apiData, errorMessage, localizedText } from '@/utils/content';
+import { fallbackPolls } from '@/data/curatedContent';
 
 const poll = ref<Poll | null>(null);
 const voted = ref(false);
@@ -69,10 +70,11 @@ async function vote(optionId: number) {
 onMounted(async () => {
   try {
     const res = await pollAPI.getActive();
-    poll.value = apiArray<Poll>(res)[0] || null;
+    poll.value = apiArray<Poll>(res)[0] || fallbackPolls[0] || null;
     normalizePercentages();
   } catch (e) {
-    poll.value = null;
+    poll.value = fallbackPolls[0] || null;
+    normalizePercentages();
   }
 });
 </script>

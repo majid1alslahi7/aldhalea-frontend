@@ -35,6 +35,8 @@
           </a>
           <span v-else>{{ item.source_name }}</span>
         </div>
+
+        <CommentsBlock :type="commentType" :item-id="item.id" />
       </article>
 
       <div v-else class="card p-8 text-center text-gray-500">
@@ -49,6 +51,7 @@ import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { Calendar, Clock, Eye, Loader2, User } from '@lucide/vue';
 import { interviewAPI, investigationAPI, reportAPI } from '@/api/news';
+import CommentsBlock from '@/components/content/CommentsBlock.vue';
 import type { EditorialContentItem } from '@/types/api';
 import { apiData, localizedText, sanitizeHtml, slugValue } from '@/utils/content';
 import { applySeo } from '@/utils/seo';
@@ -68,6 +71,7 @@ const config = computed(() => {
 });
 
 const contentLabel = computed(() => config.value.label);
+const commentType = computed(() => config.value.path);
 const safeContent = computed(() => sanitizeHtml(item.value?.content));
 const imageUrl = computed(() => item.value?.main_image || item.value?.thumbnail || item.value?.featured_image || '');
 const authorName = computed(() => item.value?.user?.name || item.value?.writer?.name || item.value?.interviewer?.name || item.value?.interviewee_name || '');

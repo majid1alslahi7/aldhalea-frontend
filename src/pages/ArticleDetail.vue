@@ -17,6 +17,7 @@
         </div>
         <img v-if="article.featured_image" :src="article.featured_image" class="w-full rounded-2xl mb-8 shadow-lg" />
         <div class="prose prose-lg max-w-none article-content" v-html="safeContent"></div>
+        <CommentsBlock type="articles" :item-id="article.id" />
       </article>
 
       <div v-else class="card p-8 text-center text-gray-500">
@@ -31,6 +32,7 @@ import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { Clock, Eye, Loader2, User } from '@lucide/vue';
 import { articleAPI } from '@/api/news';
+import CommentsBlock from '@/components/content/CommentsBlock.vue';
 import type { ArticleItem } from '@/types/api';
 import { apiData, localizedText, sanitizeHtml, slugValue } from '@/utils/content';
 import { articleBySlug } from '@/data/curatedContent';

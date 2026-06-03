@@ -4,9 +4,23 @@
 
 ## روابط أساسية
 - الصفحة الرئيسية: https://aldhalea-frontend.alssemam.com/
+- كل الأخبار: https://aldhalea-frontend.alssemam.com/news
+- المقالات: https://aldhalea-frontend.alssemam.com/articles
+- التقارير: https://aldhalea-frontend.alssemam.com/reports
+- التحقيقات: https://aldhalea-frontend.alssemam.com/investigations
+- المقابلات: https://aldhalea-frontend.alssemam.com/interviews
+- الوسوم: https://aldhalea-frontend.alssemam.com/tags
+- الكتّاب: https://aldhalea-frontend.alssemam.com/writers
+- استطلاعات الرأي: https://aldhalea-frontend.alssemam.com/polls
+- الأرشيف: https://aldhalea-frontend.alssemam.com/archive
 - البحث: https://aldhalea-frontend.alssemam.com/search
+- النشرة البريدية: https://aldhalea-frontend.alssemam.com/newsletter
 - من نحن: https://aldhalea-frontend.alssemam.com/about
 - اتصل بنا: https://aldhalea-frontend.alssemam.com/contact
+- سياسة الخصوصية: https://aldhalea-frontend.alssemam.com/privacy
+- شروط الاستخدام: https://aldhalea-frontend.alssemam.com/terms
+- سياسة النشر: https://aldhalea-frontend.alssemam.com/editorial-policy
+- سياسة التصحيح: https://aldhalea-frontend.alssemam.com/corrections-policy
 - خريطة الموقع العامة: https://aldhalea-frontend.alssemam.com/sitemap.xml
 - خريطة المحتوى الديناميكية: https://aldhalea-backend.alssemam.com/sitemap.xml
 - RSS: https://aldhalea-backend.alssemam.com/feeds/rss

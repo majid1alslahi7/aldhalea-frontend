@@ -1,5 +1,5 @@
 import apiClient from './client';
-import type { ContactPayload } from '@/types/api';
+import type { ContactPayload, NewsletterPayload } from '@/types/api';
 
 export const newsAPI = {
   getAll(filters?: Record<string, unknown>) { return apiClient.get('/news', { params: filters }); },
@@ -10,6 +10,7 @@ export const newsAPI = {
   getLocal() { return apiClient.get('/news/local'); },
   getPopular(period = 'week') { return apiClient.get('/news/popular', { params: { period } }); },
   getLatest(page = 1) { return apiClient.get('/news/latest', { params: { page } }); },
+  getByDate(date: string, page = 1) { return apiClient.get(`/news/by-date/${date}`, { params: { page } }); },
   getBySlug(slug: string) { return apiClient.get(`/news/${slug}`); },
 };
 
@@ -47,9 +48,32 @@ export const interviewAPI = {
 };
 
 export const pollAPI = {
+  getAll(page = 1) { return apiClient.get('/polls', { params: { page } }); },
   getActive() { return apiClient.get('/polls/active'); },
   getFeatured() { return apiClient.get('/polls/featured'); },
+  getById(id: string | number) { return apiClient.get(`/polls/${id}`); },
+  getResults(id: string | number) { return apiClient.get(`/polls/${id}/results`); },
   vote(pollId: number, optionId: number) { return apiClient.post(`/polls/${pollId}/vote`, { option_id: optionId }); },
+};
+
+export const tagAPI = {
+  getAll() { return apiClient.get('/tags'); },
+  getTrending() { return apiClient.get('/tags/trending'); },
+  getPopular() { return apiClient.get('/tags/popular'); },
+  getBySlug(slug: string) { return apiClient.get(`/tags/${slug}`); },
+  getNews(slug: string, page = 1) { return apiClient.get(`/tags/${slug}/news`, { params: { page } }); },
+  getArticles(slug: string, page = 1) { return apiClient.get(`/tags/${slug}/articles`, { params: { page } }); },
+};
+
+export const writerAPI = {
+  getAll() { return apiClient.get('/writers'); },
+  getFeatured() { return apiClient.get('/writers/featured'); },
+  getById(id: string | number) { return apiClient.get(`/writers/${id}`); },
+  getArticles(id: string | number, page = 1) { return apiClient.get(`/writers/${id}/articles`, { params: { page } }); },
+};
+
+export const commentAPI = {
+  getAll(type: string, id: number | string, page = 1) { return apiClient.get(`/comments/${type}/${id}`, { params: { page } }); },
 };
 
 export const searchAPI = {
@@ -58,4 +82,9 @@ export const searchAPI = {
 
 export const contactAPI = {
   send(payload: ContactPayload) { return apiClient.post('/contact', payload); },
+};
+
+export const newsletterAPI = {
+  subscribe(payload: NewsletterPayload) { return apiClient.post('/newsletter/subscribe', payload); },
+  unsubscribe(payload: NewsletterPayload) { return apiClient.post('/newsletter/unsubscribe', payload); },
 };

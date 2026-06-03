@@ -22,6 +22,7 @@ export interface Category {
   id: number;
   name: LocalizedText;
   slug: LocalizedText;
+  description?: LocalizedText;
   color?: string | null;
   news_count?: number;
 }
@@ -29,8 +30,15 @@ export interface Category {
 export interface Writer {
   id: number;
   name: string;
+  username?: string | null;
   avatar?: string | null;
   bio?: string | null;
+  role?: string | null;
+  location?: string | null;
+  website?: string | null;
+  total_articles?: number;
+  total_views?: number;
+  social_links?: Record<string, string | null | undefined> | null;
 }
 
 export interface ContentStats {
@@ -71,6 +79,8 @@ export interface ArticleItem {
   writer?: Writer | null;
   stats?: ContentStats;
   published_diff?: string | null;
+  published_at?: string | null;
+  updated_at?: string | null;
 }
 
 export interface EditorialContentItem {
@@ -114,12 +124,46 @@ export interface Poll {
   id: number;
   question: LocalizedText;
   description?: LocalizedText;
+  status?: string;
+  is_active?: boolean;
   total_votes: number;
+  allow_multiple?: boolean;
+  starts_at?: string | null;
+  ends_at?: string | null;
   options: PollOption[];
 }
 
+export interface TagItem {
+  id: number;
+  name: LocalizedText;
+  slug: LocalizedText;
+  description?: LocalizedText;
+  color?: string | null;
+  news_count?: number;
+  is_trending?: boolean;
+}
+
+export interface CommentItem {
+  id: number;
+  content: string;
+  user?: {
+    id?: number | null;
+    name?: string | null;
+    avatar?: string | null;
+  } | null;
+  parent_id?: number | null;
+  replies?: CommentItem[];
+  replies_count?: number;
+  likes_count?: number;
+  is_pinned?: boolean;
+  is_edited?: boolean;
+  status?: string;
+  time_ago?: string | null;
+  created_at?: string | null;
+}
+
 export interface SearchResult {
-  type: 'news' | 'article';
+  type: 'news' | 'article' | 'report' | 'investigation' | 'interview';
   data: NewsItem | ArticleItem;
 }
 
@@ -130,4 +174,9 @@ export interface ContactPayload {
   subject: string;
   message: string;
   website?: string;
+}
+
+export interface NewsletterPayload {
+  email: string;
+  name?: string;
 }

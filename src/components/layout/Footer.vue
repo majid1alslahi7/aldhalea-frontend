@@ -16,6 +16,11 @@
           <h4 class="font-bold mb-4">أقسام سريعة</h4>
           <ul class="space-y-2 text-sm text-gray-400">
             <li><router-link to="/" class="hover:text-white transition">الرئيسية</router-link></li>
+            <li><router-link to="/news" class="hover:text-white transition">كل الأخبار</router-link></li>
+            <li><router-link to="/articles" class="hover:text-white transition">المقالات</router-link></li>
+            <li><router-link to="/tags" class="hover:text-white transition">الوسوم</router-link></li>
+            <li><router-link to="/writers" class="hover:text-white transition">الكتّاب</router-link></li>
+            <li><router-link to="/polls" class="hover:text-white transition">استطلاعات الرأي</router-link></li>
             <li><router-link to="/about" class="hover:text-white transition">من نحن</router-link></li>
             <li><router-link to="/contact" class="hover:text-white transition">اتصل بنا</router-link></li>
           </ul>
@@ -30,7 +35,15 @@
         </div>
       </div>
     </div>
-    <div class="border-t border-white/10 py-4 text-center text-sm text-gray-500">© 2026 الضالع أونلاين. جميع الحقوق محفوظة.</div>
+    <div class="border-t border-white/10 py-4 text-center text-sm text-gray-500">
+      <div class="mb-2 flex flex-wrap justify-center gap-4">
+        <router-link to="/privacy" class="hover:text-white">الخصوصية</router-link>
+        <router-link to="/terms" class="hover:text-white">شروط الاستخدام</router-link>
+        <router-link to="/editorial-policy" class="hover:text-white">سياسة النشر</router-link>
+        <router-link to="/corrections-policy" class="hover:text-white">سياسة التصحيح</router-link>
+      </div>
+      © 2026 الضالع أونلاين. جميع الحقوق محفوظة.
+    </div>
   </footer>
 </template>
 

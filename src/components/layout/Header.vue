@@ -93,7 +93,16 @@ const menuItems = computed(() => {
     slug: slugValue(c.slug),
     path: `/category/${slugValue(c.slug)}`,
   }));
-  return [{ name: 'الرئيسية', slug: 'home', path: '/' }, ...cats, { name: 'من نحن', slug: 'about', path: '/about' }, { name: 'اتصل بنا', slug: 'contact', path: '/contact' }];
+  return [
+    { name: 'الرئيسية', slug: 'home', path: '/' },
+    { name: 'كل الأخبار', slug: 'news', path: '/news' },
+    ...cats,
+    { name: 'مقالات', slug: 'articles', path: '/articles' },
+    { name: 'كتّاب', slug: 'writers', path: '/writers' },
+    { name: 'استطلاعات', slug: 'polls', path: '/polls' },
+    { name: 'من نحن', slug: 'about', path: '/about' },
+    { name: 'اتصل بنا', slug: 'contact', path: '/contact' },
+  ];
 });
 
 function goToSearch() {

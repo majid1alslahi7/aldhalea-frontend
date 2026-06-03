@@ -1,4 +1,4 @@
-import type { ArticleItem, Category, NewsItem, SearchResult } from '@/types/api';
+import type { ArticleItem, Category, NewsItem, Poll, SearchResult, TagItem, Writer } from '@/types/api';
 
 export type CuratedNewsItem = NewsItem & { priority?: 'breaking' | 'featured' | 'editors_pick' | 'trending' | 'normal' };
 
@@ -497,7 +497,7 @@ export const fallbackArticles: ArticleItem[] = [
   }),
 ];
 
-function textValue(value: unknown): string {
+export function textValue(value: unknown): string {
   if (typeof value === 'string') return value;
   if (value && typeof value === 'object') return Object.values(value as Record<string, unknown>).find((item) => typeof item === 'string') as string || '';
   return '';
@@ -554,4 +554,94 @@ export function searchFallback(query: string): SearchResult[] {
     .map((data) => ({ type: 'article' as const, data }));
 
   return [...newsResults, ...articleResults].slice(0, 20);
+}
+
+export const fallbackTags: TagItem[] = [
+  { id: -1, name: 'المياه', slug: 'المياه', description: 'متابعة مشاريع المياه والصرف الصحي وخدمات القرى.', color: '#0891b2', news_count: 7, is_trending: true },
+  { id: -2, name: 'الاقتصاد اليمني', slug: 'الاقتصاد-اليمني', description: 'أسعار وسوق وعملة ومعيشة الأسر في اليمن والضالع.', color: '#059669', news_count: 6, is_trending: true },
+  { id: -3, name: 'السلام في اليمن', slug: 'السلام-في-اليمن', description: 'ملفات التهدئة وبناء الثقة والمسار السياسي.', color: '#dc2626', news_count: 4, is_trending: true },
+  { id: -4, name: 'التعليم', slug: 'التعليم', description: 'المدارس والطلاب والاحتياجات التعليمية.', color: '#7c3aed', news_count: 4, is_trending: false },
+  { id: -5, name: 'الطرق', slug: 'الطرق', description: 'الطرق الريفية والسيول والنقل والخدمات.', color: '#475569', news_count: 5, is_trending: false },
+  { id: -6, name: 'النزوح', slug: 'النزوح', description: 'قصص النزوح والمأوى والحماية وفرص الدخل.', color: '#ea580c', news_count: 3, is_trending: false },
+  { id: -7, name: 'التراث', slug: 'التراث', description: 'ثقافة الضالع وذاكرة القرى والفن الشعبي.', color: '#db2777', news_count: 3, is_trending: false },
+  { id: -8, name: 'الطاقة الشمسية', slug: 'الطاقة-الشمسية', description: 'حلول الطاقة لخدمات المياه والتعليم والصحة.', color: '#f59e0b', news_count: 3, is_trending: true },
+];
+
+export const fallbackWriters: Writer[] = [
+  {
+    id: -1,
+    name: 'فريق الضالع أونلاين',
+    username: 'aldhalea-desk',
+    avatar: '/brand/aldhalea-mark.png',
+    bio: 'فريق تحرير يرصد أخبار الضالع واليمن من مصادر عامة موثوقة ويعيد تقديمها بلغة محلية واضحة.',
+    role: 'writer',
+    total_articles: fallbackArticles.length,
+    total_views: fallbackArticles.reduce((sum, article) => sum + (article.stats?.views || 0), 0),
+  },
+  {
+    id: -2,
+    name: 'وحدة التحقيقات',
+    username: 'investigations',
+    avatar: '/icons/maskable-192.png',
+    bio: 'وحدة تحريرية تركز على البيانات والخدمات العامة والأسئلة التي تمس حياة المواطنين اليومية.',
+    role: 'writer',
+    total_articles: 3,
+    total_views: 8600,
+  },
+  {
+    id: -3,
+    name: 'قسم الاقتصاد والخدمات',
+    username: 'services-economy',
+    avatar: '/icons/pwa-192.png',
+    bio: 'يتابع الأسعار والخدمات والأسواق والطاقة والنقل من زاوية أثرها على الأسرة في الضالع.',
+    role: 'writer',
+    total_articles: 4,
+    total_views: 7400,
+  },
+];
+
+export const fallbackPolls: Poll[] = [
+  {
+    id: -1,
+    question: 'ما الملف الخدمي الأكثر إلحاحاً في الضالع حالياً؟',
+    description: 'استطلاع مفتوح لقياس أولويات القراء في الخدمات الأساسية.',
+    status: 'active',
+    is_active: true,
+    total_votes: 1284,
+    options: [
+      { id: -11, text: 'المياه', votes_count: 468, percentage: 36, color: '#0891b2' },
+      { id: -12, text: 'الطرق', votes_count: 312, percentage: 24, color: '#475569' },
+      { id: -13, text: 'الصحة', votes_count: 284, percentage: 22, color: '#16a34a' },
+      { id: -14, text: 'التعليم', votes_count: 220, percentage: 17, color: '#7c3aed' },
+    ],
+  },
+  {
+    id: -2,
+    question: 'أي نوع من المحتوى تريد زيادته في الموقع؟',
+    description: 'نستخدم هذه المؤشرات لتطوير التغطية التحريرية القادمة.',
+    status: 'active',
+    is_active: true,
+    total_votes: 936,
+    options: [
+      { id: -21, text: 'تحقيقات معمقة', votes_count: 338, percentage: 36, color: '#dc2626' },
+      { id: -22, text: 'تقارير مصورة', votes_count: 247, percentage: 26, color: '#2563eb' },
+      { id: -23, text: 'مقالات رأي وتحليل', votes_count: 194, percentage: 21, color: '#f59e0b' },
+      { id: -24, text: 'أخبار عاجلة قصيرة', votes_count: 157, percentage: 17, color: '#16a34a' },
+    ],
+  },
+];
+
+export function tagBySlug(slug: string): TagItem | null {
+  const decoded = decodeURIComponent(slug);
+  return fallbackTags.find((tag) => textValue(tag.slug) === decoded) || null;
+}
+
+export function writerById(id: string | number): Writer | null {
+  const numericId = Number(id);
+  return fallbackWriters.find((item) => item.id === numericId) || null;
+}
+
+export function pollById(id: string | number): Poll | null {
+  const numericId = Number(id);
+  return fallbackPolls.find((item) => item.id === numericId) || null;
 }

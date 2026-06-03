@@ -26,6 +26,7 @@
             <button class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center"><Share2 :size="18" /></button>
             <button class="w-10 h-10 bg-green-500 text-white rounded-lg flex items-center justify-center"><Send :size="18" /></button>
           </div>
+          <CommentsBlock type="news" :item-id="news.id" />
         </article>
         <aside class="space-y-8">
           <div v-if="news.writer" class="card p-5 text-center">
@@ -44,6 +45,7 @@ import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { Loader2, User, Calendar, Clock, Eye, Share2, Send } from '@lucide/vue';
 import { useNewsStore } from '@/stores/news';
+import CommentsBlock from '@/components/content/CommentsBlock.vue';
 import type { NewsItem } from '@/types/api';
 import { apiData, localizedText, sanitizeHtml, slugValue } from '@/utils/content';
 import { applySeo } from '@/utils/seo';

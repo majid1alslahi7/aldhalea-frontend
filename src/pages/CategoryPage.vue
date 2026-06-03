@@ -25,6 +25,7 @@ import { Loader2 } from '@lucide/vue';
 import { categoryAPI } from '@/api/news';
 import type { Category, NewsItem } from '@/types/api';
 import { apiArray, apiData, errorMessage, localizedText, slugValue } from '@/utils/content';
+import { categoryByRouteSlug, mergeNewsWithFallback, newsByCategory } from '@/data/curatedContent';
 
 const route = useRoute();
 const category = ref<Category | null>(null);
@@ -41,10 +42,12 @@ onMounted(async () => {
       categoryAPI.getBySlug(slug),
       categoryAPI.getNews(slug),
     ]);
-    category.value = apiData<Category | null>(categoryRes, null);
-    newsList.value = apiArray<NewsItem>(newsRes);
+    category.value = categoryByRouteSlug(slug) || apiData<Category | null>(categoryRes, null);
+    newsList.value = mergeNewsWithFallback(apiArray<NewsItem>(newsRes), newsByCategory(slug));
   } catch (e) {
-    error.value = errorMessage(e, 'تعذر تحميل أخبار التصنيف');
+    category.value = categoryByRouteSlug(slug);
+    newsList.value = newsByCategory(slug);
+    error.value = newsList.value.length ? '' : errorMessage(e, 'تعذر تحميل أخبار التصنيف');
   } finally {
     loading.value = false;
   }

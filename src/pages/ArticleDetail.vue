@@ -33,6 +33,7 @@ import { Clock, Eye, Loader2, User } from '@lucide/vue';
 import { articleAPI } from '@/api/news';
 import type { ArticleItem } from '@/types/api';
 import { apiData, localizedText, sanitizeHtml } from '@/utils/content';
+import { articleBySlug } from '@/data/curatedContent';
 
 const route = useRoute();
 const article = ref<ArticleItem | null>(null);
@@ -41,9 +42,12 @@ const loading = ref(true);
 const safeContent = computed(() => sanitizeHtml(article.value?.content));
 
 onMounted(async () => {
+  const slug = route.params.slug as string;
   try {
-    const res = await articleAPI.getBySlug(route.params.slug as string);
-    article.value = apiData<ArticleItem | null>(res, null);
+    const res = await articleAPI.getBySlug(slug);
+    article.value = articleBySlug(slug) || apiData<ArticleItem | null>(res, null);
+  } catch {
+    article.value = articleBySlug(slug);
   } finally {
     loading.value = false;
   }

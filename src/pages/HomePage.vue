@@ -122,6 +122,7 @@ import PollWidget from '@/components/interactive/PollWidget.vue';
 import { articleAPI } from '@/api/news';
 import type { ArticleItem, NewsItem } from '@/types/api';
 import { apiArray, localizedText, slugValue } from '@/utils/content';
+import { fallbackArticles } from '@/data/curatedContent';
 
 const router = useRouter();
 const newsStore = useNewsStore();
@@ -148,7 +149,14 @@ onMounted(async () => {
 
   const articlesResult = results[5];
   if (articlesResult.status === 'fulfilled') {
-    latestArticles.value = apiArray<ArticleItem>(articlesResult.value).slice(0, 6);
+    const apiArticles = apiArray<ArticleItem>(articlesResult.value);
+    const fallbackTitles = new Set(fallbackArticles.map((article) => localizedText(article.title)));
+    latestArticles.value = [
+      ...fallbackArticles,
+      ...apiArticles.filter((article) => !fallbackTitles.has(localizedText(article.title))),
+    ].slice(0, 6);
+  } else {
+    latestArticles.value = fallbackArticles.slice(0, 6);
   }
 });
 </script>

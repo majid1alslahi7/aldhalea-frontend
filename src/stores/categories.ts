@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { categoryAPI } from '@/api/news';
 import type { Category } from '@/types/api';
 import { apiArray } from '@/utils/content';
+import { fallbackCategories, mergeCategoriesWithFallback } from '@/data/curatedContent';
 
 export const useCategoryStore = defineStore('categories', () => {
   const categories = ref<Category[]>([]);
@@ -11,18 +12,18 @@ export const useCategoryStore = defineStore('categories', () => {
   async function fetchCategories() {
     try {
       const res = await categoryAPI.getAll();
-      categories.value = apiArray<Category>(res);
+      categories.value = mergeCategoriesWithFallback(apiArray<Category>(res));
     } catch {
-      categories.value = [];
+      categories.value = fallbackCategories;
     }
   }
 
   async function fetchMenuCategories() {
     try {
       const res = await categoryAPI.getMenu();
-      menuCategories.value = apiArray<Category>(res);
+      menuCategories.value = mergeCategoriesWithFallback(apiArray<Category>(res));
     } catch {
-      menuCategories.value = [];
+      menuCategories.value = fallbackCategories;
     }
   }
 

@@ -25,6 +25,7 @@ import { Loader2 } from '@lucide/vue';
 import { searchAPI } from '@/api/news';
 import type { SearchResult } from '@/types/api';
 import { apiData, errorMessage, localizedText, slugValue } from '@/utils/content';
+import { searchFallback } from '@/data/curatedContent';
 
 const route = useRoute();
 const query = ref('');
@@ -41,9 +42,13 @@ async function runSearch() {
   if (query.value.length >= 2) {
     try {
       const res = await searchAPI.search(query.value);
-      results.value = apiData<{ results: SearchResult[] }>(res, { results: [] }).results || [];
+      const apiResults = apiData<{ results: SearchResult[] }>(res, { results: [] }).results || [];
+      const fallbackResults = searchFallback(query.value);
+      const seen = new Set(fallbackResults.map((item) => `${item.type}-${localizedText(item.data.title)}`));
+      results.value = [...fallbackResults, ...apiResults.filter((item) => !seen.has(`${item.type}-${localizedText(item.data.title)}`))];
     } catch (e) {
-      error.value = errorMessage(e, 'تعذر تنفيذ البحث');
+      results.value = searchFallback(query.value);
+      error.value = results.value.length ? '' : errorMessage(e, 'تعذر تنفيذ البحث');
     }
   }
 

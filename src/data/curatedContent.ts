@@ -2,6 +2,16 @@ import type { ArticleItem, Category, NewsItem, Poll, SearchResult, TagItem, Writ
 
 export type CuratedNewsItem = NewsItem & { priority?: 'breaking' | 'featured' | 'editors_pick' | 'trending' | 'normal' };
 
+const backendUrl = (
+  import.meta.env.VITE_BACKEND_URL ||
+  import.meta.env.VITE_API_URL?.replace(/\/api\/v\d+$/i, '').replace(/\/api$/i, '') ||
+  'https://aldhalea-backend.alssemam.com'
+).replace(/\/+$/, '');
+
+function backendAsset(path: string): string {
+  return `${backendUrl}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
 const image = {
   water: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
   solar: 'https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=1200&q=80',
@@ -13,6 +23,7 @@ const image = {
   sports: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1200&q=80',
   tech: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80',
   culture: 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?auto=format&fit=crop&w=1200&q=80',
+  wilayahGhadir: backendAsset('/uploads/news/wilayah-ghadir-aldhalea.jpg'),
   default: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80',
 };
 
@@ -32,8 +43,12 @@ export const fallbackCategories: Category[] = [
 const categoryBySlug = new Map(fallbackCategories.map((category) => [category.slug as string, category]));
 const writer = { id: 1, name: 'فريق الضالع أونلاين', bio: 'فريق تحرير يرصد الأخبار من مصادر عامة موثوقة ويعيد صياغتها تحريريا.' };
 
-function html(lead: string, points: string[], source: string, url: string) {
-  return `<p>${lead}</p><ul>${points.map((point) => `<li>${point}</li>`).join('')}</ul><p><strong>مصدر المعلومات:</strong> ${source} - ${url}</p>`;
+function html(lead: string, points: string[], source: string, url: string, bodyFormat: 'list' | 'paragraphs' = 'list') {
+  const body = bodyFormat === 'paragraphs'
+    ? points.map((point) => `<p>${point}</p>`).join('')
+    : `<ul>${points.map((point) => `<li>${point}</li>`).join('')}</ul>`;
+
+  return `<p>${lead}</p>${body}<p><strong>مصدر المعلومات:</strong> ${source} - ${url}</p>`;
 }
 
 function news(index: number, item: {
@@ -46,6 +61,9 @@ function news(index: number, item: {
   source: string;
   url: string;
   image: keyof typeof image;
+  bodyFormat?: 'list' | 'paragraphs';
+  publishedDate?: string;
+  publishedDiff?: string;
   priority?: CuratedNewsItem['priority'];
   location?: string;
 }): CuratedNewsItem {
@@ -55,7 +73,7 @@ function news(index: number, item: {
     title: item.title,
     slug: item.slug,
     excerpt: item.excerpt,
-    content: html(item.lead, item.points, item.source, item.url),
+    content: html(item.lead, item.points, item.source, item.url, item.bodyFormat),
     main_image: image[item.image],
     thumbnail: image[item.image],
     category,
@@ -63,13 +81,35 @@ function news(index: number, item: {
     source: { name: item.source, url: item.url },
     stats: { views: 2200 + index * 137, comments: (index * 3) % 41, shares: 40 + index },
     reading_time: { formatted: '6 دقائق' },
-    published_date: '2026-06-03',
-    published_diff: index < 5 ? 'منذ ساعات' : 'منذ أيام',
+    published_date: item.publishedDate || '2026-06-03',
+    published_diff: item.publishedDiff || (index < 5 ? 'منذ ساعات' : 'منذ أيام'),
     priority: item.priority || 'normal',
   };
 }
 
 export const fallbackNews: CuratedNewsItem[] = [
+  news(30, {
+    category: 'اخبار-محلية',
+    title: 'مهرجانات وفعاليات في الضالع بذكرى يوم الولاية "عيد الغدير"',
+    slug: 'مهرجانات-وفعاليات-في-الضالع-بذكرى-يوم-الولاية-عيد-الغدير',
+    excerpt: 'نُظمت في مديريات دمت وقعطبة وجبن والحشاء في محافظة الضالع اليوم، مهرجانات شعبية وفعاليات خطابية، بذكرى يوم الولاية، تحت شعار "من كنت مولاه فهذا علي مولاه".',
+    lead: 'نُظمت في مديريات دمت وقعطبة وجبن والحشاء في محافظة الضالع اليوم، مهرجانات شعبية وفعاليات خطابية، بذكرى يوم الولاية، تحت شعار "من كنت مولاه فهذا علي مولاه".',
+    points: [
+      'وأكدت المهرجانات والفعاليات، التي تقدمها في دمت القائم بأعمال محافظ الضالع عبداللطيف الشغدري ونائب وزير الخدمة المدنية والتطوير الإداري أنس سنان ومسؤول التعبئة بالمحافظة أحمد المراني، عمق المحبة والولاء لله ورسوله والإمام علي وأعلام الهدى.',
+      'وعبرت عن مدى إرتباط اليمنيين بهويتهم الإيمانية ومبدأ الولاية الذي أطلقه الرسول الأعظم بتوجيه من الله عز وجل، لافتة إلى أهمية الولاية وما تحقق من عزة وكرامة ونصر، وتحرر من الوصاية الأجنبية والهيمنة الخارجية، ومواجهة قوى الاستكبار العالمي.',
+      'وأكدت أهمية إحياء الذكرى لترسيخ مبدأ الولاية والاقتداء بسيرة الإمام علي عليه السلام، مستعرضة العلاقة الوطيدة التي تربط اليمنيين بالإمام علي كرّم الله وجهه، وإيمانهم العميق بولايته التي أعلنها النبي صلى الله عليه وآله وسلم في يوم "غدير خم".',
+      'وتطرقت فقرات المهرجانات والفعاليات إلى فضائل الإمام علي عليه السلام ومواقفه في دعم الحق والوقوف ضد الظلم، وترسيخ ثقافة الجهاد والاستشهاد إنطلاقا من كتاب الله الكريم والرسالة المحمدية.',
+      'وجدّدت التأكيد على أهمية التمسك بولاية الإمام علي عليه السلام والسير على الدرب الذي رسمه الله ورسوله بمبدأ التولي لله ورسوله وأعلام الهدى من آل بيت النبي عليهم السلام، مؤكدة ضرورة التولّي الصادق والمخلص لله ورسوله والإمام علي عليه السلام، الذي يعد الضمانة الحقيقية لصون كرامة الأمة وعزتها.',
+      'وتخللت المهرجانات والفعاليات قصائد شعرية وأهازيج شعبية عبرت عن أهمية الذكرى.',
+    ],
+    source: 'مراسل الضالع أونلاين',
+    url: '/news/مهرجانات-وفعاليات-في-الضالع-بذكرى-يوم-الولاية-عيد-الغدير',
+    image: 'wilayahGhadir',
+    bodyFormat: 'paragraphs',
+    publishedDate: '2026-06-04',
+    publishedDiff: 'اليوم',
+    priority: 'featured',
+  }),
   news(0, {
     category: 'اخبار-محلية',
     title: 'مشروع طاقة شمسية يعزز ضخ المياه في قرى حجر وسناح بالضالع',

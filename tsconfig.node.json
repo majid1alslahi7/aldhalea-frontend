@@ -1,10 +1,13 @@
 {
   "compilerOptions": {
     "target": "ES2022",
+    "lib": ["ESNext"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "types": ["node"],
+    "skipLibCheck": true,
     "composite": true,
     "declaration": true,
     "emitDeclarationOnly": true,

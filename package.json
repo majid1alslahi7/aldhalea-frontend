@@ -22,6 +22,7 @@
     "@tailwindcss/postcss": "^4.3.0",
     "@tailwindcss/vite": "^4.3.0",
     "@tsconfig/node24": "^24.0.4",
+    "@types/node": "^25.9.1",
     "@vitejs/plugin-vue": "latest",
     "autoprefixer": "latest",
     "postcss": "latest",

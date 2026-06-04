@@ -21,6 +21,7 @@
             <li><router-link to="/tags" class="hover:text-white transition">الوسوم</router-link></li>
             <li><router-link to="/writers" class="hover:text-white transition">الكتّاب</router-link></li>
             <li><router-link to="/polls" class="hover:text-white transition">استطلاعات الرأي</router-link></li>
+            <li><router-link to="/team" class="hover:text-white transition">فريق التحرير</router-link></li>
             <li><router-link to="/about" class="hover:text-white transition">من نحن</router-link></li>
             <li><router-link to="/contact" class="hover:text-white transition">اتصل بنا</router-link></li>
           </ul>
@@ -41,6 +42,9 @@
         <router-link to="/terms" class="hover:text-white">شروط الاستخدام</router-link>
         <router-link to="/editorial-policy" class="hover:text-white">سياسة النشر</router-link>
         <router-link to="/corrections-policy" class="hover:text-white">سياسة التصحيح</router-link>
+        <router-link to="/ownership" class="hover:text-white">الملكية والتمويل</router-link>
+        <router-link to="/advertise" class="hover:text-white">أعلن معنا</router-link>
+        <router-link to="/ethics" class="hover:text-white">الأخلاقيات</router-link>
       </div>
       © 2026 الضالع أونلاين. جميع الحقوق محفوظة.
     </div>

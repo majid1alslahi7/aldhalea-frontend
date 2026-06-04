@@ -36,6 +36,9 @@
           <span v-else>{{ item.source_name }}</span>
         </div>
 
+        <ShareBar :type="commentType" :item-id="item.id" :title="localizedText(item.title)" :description="localizedText(item.excerpt || item.subtitle)" :url="shareUrl" />
+        <CorrectionReportBox :type="commentType" :item-id="item.id" :title="localizedText(item.title)" :url="shareUrl" />
+        <RelatedContent :title="`مواد أخرى من ${contentLabel}`" :items="relatedItems" :base-path="`/${config.path}`" :archive-path="`/${config.path}`" />
         <CommentsBlock :type="commentType" :item-id="item.id" />
       </article>
 
@@ -52,8 +55,11 @@ import { useRoute } from 'vue-router';
 import { Calendar, Clock, Eye, Loader2, User } from '@lucide/vue';
 import { interviewAPI, investigationAPI, reportAPI } from '@/api/news';
 import CommentsBlock from '@/components/content/CommentsBlock.vue';
+import CorrectionReportBox from '@/components/content/CorrectionReportBox.vue';
+import RelatedContent from '@/components/content/RelatedContent.vue';
+import ShareBar from '@/components/content/ShareBar.vue';
 import type { EditorialContentItem } from '@/types/api';
-import { apiData, localizedText, sanitizeHtml, slugValue } from '@/utils/content';
+import { apiArray, apiData, localizedText, sanitizeHtml, slugValue } from '@/utils/content';
 import { applySeo } from '@/utils/seo';
 import { assetUrl, routeUrl, site } from '@/utils/site';
 
@@ -61,6 +67,7 @@ type ContentType = 'report' | 'investigation' | 'interview';
 
 const route = useRoute();
 const item = ref<EditorialContentItem | null>(null);
+const relatedItems = ref<EditorialContentItem[]>([]);
 const loading = ref(true);
 
 const config = computed(() => {
@@ -75,6 +82,7 @@ const commentType = computed(() => config.value.path);
 const safeContent = computed(() => sanitizeHtml(item.value?.content));
 const imageUrl = computed(() => item.value?.main_image || item.value?.thumbnail || item.value?.featured_image || '');
 const authorName = computed(() => item.value?.user?.name || item.value?.writer?.name || item.value?.interviewer?.name || item.value?.interviewee_name || '');
+const shareUrl = computed(() => item.value ? routeUrl(`/${config.value.path}/${slugValue(item.value.slug)}`) : routeUrl(route.fullPath));
 
 function formatDate(value: string) {
   const date = new Date(value);
@@ -128,10 +136,20 @@ async function loadContent(slug: string) {
   const activeSlug = slug;
   loading.value = true;
   item.value = null;
+  relatedItems.value = [];
   try {
     const res = await config.value.api.getBySlug(slug);
     if (route.name !== activeRouteName || route.params.slug !== activeSlug) return;
     item.value = apiData<EditorialContentItem | null>(res, null);
+    if (item.value) {
+      try {
+        const latest = await config.value.api.getLatest();
+        if (route.name !== activeRouteName || route.params.slug !== activeSlug) return;
+        relatedItems.value = apiArray<EditorialContentItem>(latest).filter((entry) => entry.id !== item.value?.id).slice(0, 4);
+      } catch {
+        relatedItems.value = [];
+      }
+    }
   } catch {
     if (route.name !== activeRouteName || route.params.slug !== activeSlug) return;
     item.value = null;

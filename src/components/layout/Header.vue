@@ -16,7 +16,7 @@
         <router-link to="/" class="flex items-center gap-2 md:gap-3 flex-shrink-0">
           <img src="/brand/aldhalea-mark.png" alt="شعار الضالع أونلاين" class="h-12 w-12 md:h-14 md:w-14 object-contain" />
           <div class="text-right">
-            <h1 class="text-lg md:text-2xl font-extrabold text-primary-900 leading-tight">الضالع أونلاين</h1>
+            <div class="text-lg md:text-2xl font-extrabold text-primary-900 leading-tight">الضالع أونلاين</div>
             <p class="text-[10px] md:text-xs text-gray-500">أينما كنتَ.. نُحيطكَ بالخبر</p>
           </div>
         </router-link>

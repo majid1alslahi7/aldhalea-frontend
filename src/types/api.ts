@@ -61,10 +61,13 @@ export interface NewsItem {
   thumbnail?: string | null;
   category?: Category | null;
   writer?: Writer | null;
+  tags?: TagItem[];
   source?: { name?: string | null; url?: string | null } | null;
   stats?: ContentStats;
   reading_time?: { formatted?: string | null } | null;
   published_date?: string | null;
+  published_at?: string | null;
+  updated_at?: string | null;
   published_diff?: string | null;
 }
 
@@ -77,6 +80,7 @@ export interface ArticleItem {
   featured_image?: string | null;
   category?: Category | null;
   writer?: Writer | null;
+  tags?: TagItem[];
   stats?: ContentStats;
   published_diff?: string | null;
   published_at?: string | null;
@@ -179,4 +183,24 @@ export interface ContactPayload {
 export interface NewsletterPayload {
   email: string;
   name?: string;
+}
+
+export interface SharePayload {
+  shareable_type: string;
+  shareable_id: number;
+  platform: 'facebook' | 'twitter' | 'x' | 'whatsapp' | 'telegram' | 'email' | 'copy_link' | 'native' | 'other';
+  url?: string;
+}
+
+export interface CorrectionReportPayload {
+  content_type: string;
+  content_id?: number;
+  content_title?: string;
+  url: string;
+  reason: 'correction' | 'source' | 'image' | 'typo' | 'rights' | 'other' | string;
+  details: string;
+  evidence_url?: string;
+  reporter_name?: string;
+  reporter_email?: string;
+  website?: string;
 }

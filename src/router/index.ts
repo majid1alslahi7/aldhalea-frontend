@@ -34,6 +34,10 @@ const router = createRouter({
     { path: '/terms', name: 'terms', component: () => import('@/pages/StaticInfoPage.vue'), meta: { title: 'شروط الاستخدام', staticPage: 'terms' } },
     { path: '/editorial-policy', name: 'editorial-policy', component: () => import('@/pages/StaticInfoPage.vue'), meta: { title: 'سياسة النشر', staticPage: 'editorial' } },
     { path: '/corrections-policy', name: 'corrections-policy', component: () => import('@/pages/StaticInfoPage.vue'), meta: { title: 'سياسة التصحيح', staticPage: 'corrections' } },
+    { path: '/team', name: 'team', component: () => import('@/pages/StaticInfoPage.vue'), meta: { title: 'فريق التحرير', staticPage: 'team' } },
+    { path: '/ownership', name: 'ownership', component: () => import('@/pages/StaticInfoPage.vue'), meta: { title: 'الملكية والتمويل', staticPage: 'ownership' } },
+    { path: '/advertise', name: 'advertise', component: () => import('@/pages/StaticInfoPage.vue'), meta: { title: 'أعلن معنا', staticPage: 'advertise' } },
+    { path: '/ethics', name: 'ethics', component: () => import('@/pages/StaticInfoPage.vue'), meta: { title: 'ميثاق أخلاقيات النشر', staticPage: 'ethics' } },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('@/pages/NotFoundPage.vue'), meta: { title: 'الصفحة غير موجودة', noindex: true } },
   ],
   scrollBehavior() { return { top: 0, behavior: 'smooth' }; }

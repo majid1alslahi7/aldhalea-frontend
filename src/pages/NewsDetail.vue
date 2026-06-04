@@ -21,11 +21,11 @@
             </a>
             <span v-else>{{ news.source.name }}</span>
           </div>
-          <div class="flex items-center gap-3 mt-8 pt-6 border-t">
-            <span class="text-sm text-gray-500">شارك:</span>
-            <button class="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center"><Share2 :size="18" /></button>
-            <button class="w-10 h-10 bg-green-500 text-white rounded-lg flex items-center justify-center"><Send :size="18" /></button>
-          </div>
+          <TagsList :tags="news.tags || []" />
+          <ShareBar type="news" :item-id="news.id" :title="localizedText(news.title)" :description="localizedText(news.excerpt || news.subtitle)" :url="shareUrl" />
+          <CorrectionReportBox type="news" :item-id="news.id" :title="localizedText(news.title)" :url="shareUrl" />
+          <NextPreviousNav base-path="/news" :previous="previousNews" :next="nextNews" />
+          <RelatedContent title="مواد مرتبطة" :items="relatedNews" base-path="/news" archive-path="/news" />
           <CommentsBlock type="news" :item-id="news.id" />
         </article>
         <aside class="space-y-8">
@@ -43,21 +43,43 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import { Loader2, User, Calendar, Clock, Eye, Share2, Send } from '@lucide/vue';
-import { useNewsStore } from '@/stores/news';
+import { Loader2, User, Calendar, Clock, Eye } from '@lucide/vue';
+import { newsAPI } from '@/api/news';
 import CommentsBlock from '@/components/content/CommentsBlock.vue';
+import CorrectionReportBox from '@/components/content/CorrectionReportBox.vue';
+import NextPreviousNav from '@/components/content/NextPreviousNav.vue';
+import RelatedContent from '@/components/content/RelatedContent.vue';
+import ShareBar from '@/components/content/ShareBar.vue';
+import TagsList from '@/components/content/TagsList.vue';
 import type { NewsItem } from '@/types/api';
 import { apiData, localizedText, sanitizeHtml, slugValue } from '@/utils/content';
 import { applySeo } from '@/utils/seo';
 import { assetUrl, routeUrl, site } from '@/utils/site';
-import { newsBySlug } from '@/data/curatedContent';
+import { fallbackNews, newsBySlug, textValue } from '@/data/curatedContent';
 
 const route = useRoute();
-const newsStore = useNewsStore();
 const news = ref<NewsItem | null>(null);
+const relatedNews = ref<NewsItem[]>([]);
+const nextNews = ref<NewsItem | null>(null);
+const previousNews = ref<NewsItem | null>(null);
 const loading = ref(true);
 
 const safeContent = computed(() => sanitizeHtml(news.value?.content));
+const shareUrl = computed(() => news.value ? routeUrl(`/news/${slugValue(news.value.slug)}`) : routeUrl(route.fullPath));
+
+function fallbackRelated(current: NewsItem | null) {
+  if (!current) return [];
+  const currentCategory = textValue(current.category?.slug);
+  const sameCategory = fallbackNews
+    .filter((item) => item.id !== current.id && textValue(item.category?.slug) === currentCategory)
+    .slice(0, 4);
+
+  if (sameCategory.length) return sameCategory;
+
+  return fallbackNews
+    .filter((item) => item.id !== current.id)
+    .slice(0, 4);
+}
 
 function updateSeo(slug: string) {
   if (!news.value) {
@@ -85,10 +107,12 @@ function updateSeo(slug: string) {
       description,
       image: assetUrl(image),
       datePublished: news.value.published_date,
+      dateModified: news.value.updated_at || news.value.published_at || news.value.published_date,
       author: { '@type': 'Person', name: news.value.writer?.name || site.name },
       publisher: { '@type': 'NewsMediaOrganization', name: site.name, logo: { '@type': 'ImageObject', url: assetUrl('/icons/pwa-512.png') } },
       mainEntityOfPage: routeUrl(path),
       articleSection: localizedText(news.value.category?.name),
+      keywords: (news.value.tags || []).map((tag) => localizedText(tag.name)).filter(Boolean).join(', '),
       inLanguage: site.language,
     },
   });
@@ -98,19 +122,37 @@ async function loadNews(slug: string) {
   const activeSlug = slug;
   loading.value = true;
   news.value = null;
-  const fallbackNews = newsBySlug(slug);
+  relatedNews.value = [];
+  nextNews.value = null;
+  previousNews.value = null;
+  const fallbackItem = newsBySlug(slug);
 
-  if (fallbackNews) {
-    news.value = fallbackNews;
+  if (fallbackItem) {
+    news.value = fallbackItem;
+    relatedNews.value = fallbackRelated(fallbackItem);
     loading.value = false;
     updateSeo(slug);
   }
 
-  const result = await newsStore.fetchNewsBySlug(slug);
-  if (route.params.slug !== activeSlug) return;
-  if (result) news.value = apiData<NewsItem | null>(result, null);
-  loading.value = false;
-  updateSeo(slug);
+  try {
+    const result = await newsAPI.getBySlug(slug);
+    if (route.params.slug !== activeSlug) return;
+    const item = apiData<NewsItem | null>(result, null);
+    if (item) {
+      news.value = item;
+      const related = ((result as { related_news?: NewsItem[] }).related_news || []).slice(0, 4);
+      relatedNews.value = related.length ? related : fallbackRelated(item);
+      nextNews.value = (result as { next_news?: NewsItem | null }).next_news || null;
+      previousNews.value = (result as { previous_news?: NewsItem | null }).previous_news || null;
+    }
+  } catch {
+    if (route.params.slug !== activeSlug) return;
+    relatedNews.value = fallbackRelated(news.value);
+  } finally {
+    if (route.params.slug !== activeSlug) return;
+    loading.value = false;
+    updateSeo(slug);
+  }
 }
 
 watch(() => route.params.slug, (slug) => loadNews(slug as string), { immediate: true });

@@ -1,5 +1,5 @@
 import apiClient from './client';
-import type { ContactPayload, NewsletterPayload } from '@/types/api';
+import type { ContactPayload, CorrectionReportPayload, NewsletterPayload, SharePayload } from '@/types/api';
 
 export const newsAPI = {
   getAll(filters?: Record<string, unknown>) { return apiClient.get('/news', { params: filters }); },
@@ -12,6 +12,8 @@ export const newsAPI = {
   getLatest(page = 1) { return apiClient.get('/news/latest', { params: { page } }); },
   getByDate(date: string, page = 1) { return apiClient.get(`/news/by-date/${date}`, { params: { page } }); },
   getBySlug(slug: string) { return apiClient.get(`/news/${slug}`); },
+  getRelated(id: number | string) { return apiClient.get(`/news/${id}/related`); },
+  getNextPrevious(id: number | string) { return apiClient.get(`/news/${id}/next-previous`); },
 };
 
 export const categoryAPI = {
@@ -27,6 +29,7 @@ export const articleAPI = {
   getPopular() { return apiClient.get('/articles/popular'); },
   getLatest() { return apiClient.get('/articles/latest'); },
   getBySlug(slug: string) { return apiClient.get(`/articles/${slug}`); },
+  getRelated(id: number | string) { return apiClient.get(`/articles/${id}/related`); },
 };
 
 export const reportAPI = {
@@ -87,4 +90,12 @@ export const contactAPI = {
 export const newsletterAPI = {
   subscribe(payload: NewsletterPayload) { return apiClient.post('/newsletter/subscribe', payload); },
   unsubscribe(payload: NewsletterPayload) { return apiClient.post('/newsletter/unsubscribe', payload); },
+};
+
+export const shareAPI = {
+  track(payload: SharePayload) { return apiClient.post('/shares', payload); },
+};
+
+export const correctionAPI = {
+  report(payload: CorrectionReportPayload) { return apiClient.post('/corrections/report', { ...payload, website: '' }); },
 };

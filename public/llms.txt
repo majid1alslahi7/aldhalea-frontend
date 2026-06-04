@@ -21,6 +21,10 @@
 - شروط الاستخدام: https://aldhalea-frontend.alssemam.com/terms
 - سياسة النشر: https://aldhalea-frontend.alssemam.com/editorial-policy
 - سياسة التصحيح: https://aldhalea-frontend.alssemam.com/corrections-policy
+- فريق التحرير: https://aldhalea-frontend.alssemam.com/team
+- الملكية والتمويل: https://aldhalea-frontend.alssemam.com/ownership
+- أعلن معنا: https://aldhalea-frontend.alssemam.com/advertise
+- ميثاق أخلاقيات النشر: https://aldhalea-frontend.alssemam.com/ethics
 - خريطة الموقع العامة: https://aldhalea-frontend.alssemam.com/sitemap.xml
 - خريطة المحتوى الديناميكية: https://aldhalea-backend.alssemam.com/sitemap.xml
 - RSS: https://aldhalea-backend.alssemam.com/feeds/rss
